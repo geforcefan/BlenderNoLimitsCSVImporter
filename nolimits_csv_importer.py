@@ -5,8 +5,8 @@ bl_info = {
     "blender": (2, 61, 0),
     "location": "Tools > NoLimits CSV Importer",
     "description": "Generate a spline from NoLimit CSV file",
-    "wiki_url": "",
-    "category": "Import CSV",
+    "wiki_url": "https://github.com/geforcefan/BlenderNoLimitsCSVImporter",
+    "category": "Import CSV"
 }
 
 import bpy
@@ -75,8 +75,6 @@ class NoLimitsImporter():
                     continue
             
         return True
-    
-
 
 class FileSelectCSVOperator(bpy.types.Operator):
     bl_idname = "object.file_select_csv"
@@ -93,7 +91,7 @@ class FileSelectCSVOperator(bpy.types.Operator):
         context.window_manager.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
-class ToolsPanel(bpy.types.Panel):
+class NoLimitsImporterPanel(bpy.types.Panel):
     bl_label = "NoLimits CSV Importer"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
@@ -101,5 +99,16 @@ class ToolsPanel(bpy.types.Panel):
     def draw(self, context):
         self.layout.operator("object.file_select_csv")
         
-bpy.utils.register_class(FileSelectCSVOperator)
-bpy.utils.register_module(__name__)
+###------------------------------------------------------------
+# Register
+
+def register():
+    bpy.utils.register_class(FileSelectCSVOperator)
+    bpy.utils.register_module(__name__)
+
+def unregister():
+    bpy.utils.unregister_class(FileSelectCSVOperator)
+    bpy.utils.unregister_module(__name__)
+
+if __name__ == "__main__":
+    register()
