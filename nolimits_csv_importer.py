@@ -1,7 +1,7 @@
 bl_info = {
     "name": "NoLimits CSV Importer",
     "author": "Ercan Akyürek",
-    "version": (0,0,1),
+    "version": (0,1,1),
     "blender": (2, 61, 0),
     "location": "Tools > NoLimits CSV Importer",
     "description": "Generate a spline from NoLimit CSV file",
@@ -43,16 +43,27 @@ class NoLimitsImporter():
         spline.points.add(len(self.vertices)-1) 
         
         i = 0        
+        lastRoll = 0
+        rollToAdd = 0
         
         for vertex in self.vertices:
             newPoint = spline.points[i]  
             x, z, y = vertex['pos']
             
             newPoint.co = (x * -1, y, z, 1)
-            roll = math.atan2(-vertex['left'][1], vertex['up'][1]);
+            
+            actualRoll = math.atan2(-vertex['left'][1], vertex['up'][1])
+            diff = lastRoll - actualRoll
+            lastRoll = actualRoll
+            
+            if(math.fabs(diff) >= 358 * math.pi / 180):
+                rollToAdd = rollToAdd + diff
+            
+            roll = rollToAdd + actualRoll
+            
             newPoint.tilt = -roll
             
-            i = i + 1;
+            i = i + 1
         
         return True
         
