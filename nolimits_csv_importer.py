@@ -20,8 +20,6 @@ class NoLimitsImporter():
     csvfilepath = ""
     
     vertices = []
-    mainSplineCoordinates = []
-    railSplineCoordinates = []
     
     def __init__(self, filepath):
         self.csvfilepath = filepath
