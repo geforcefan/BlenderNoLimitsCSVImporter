@@ -3,15 +3,15 @@
 IMPORTER_NAME = "NoLimits 2 Professional Track Spline (.csv)"
 
 bl_info = {
-    "name": IMPORTER_NAME,
+    "name": "NoLimits 2 Professional Track Spline (.csv)",
     "author": "Ercan Akyürek and Daniel Hilpert",
     "version": (2, 80, 1),
     "blender": (2, 80, 0),
     "location": "File > Import > NoLimits 2 Professional Track Spline (.csv)",
-    "description": "Generates a curve object from NoLimit2 Rollcoaster "
-                   "Simulation Professional CSV exports",
+    "description": "Generates a curve object from NoLimit2 Rollercoaster "
+                   "Simulation Professional CSV data",
     "wiki_url": "https://github.com/bestdani/BlenderNoLimitsCSVImporter",
-    "category": "Import CSV"
+    "category": "Import-Export"
 }
 
 import bpy
@@ -103,7 +103,7 @@ def apply_tilt(spline, vertices):
 
 class ImportNl2Csv(Operator, ImportHelper):
     """Imports coaster track splines as a curve"""
-    bl_idname = "import.nl_csv_data"
+    bl_idname = "import_nl.csv_data"
     bl_label = IMPORTER_NAME
 
     # ImportHelper mixin class uses this
@@ -112,7 +112,7 @@ class ImportNl2Csv(Operator, ImportHelper):
     filter_glob: StringProperty(
         default="*.csv",
         options={'HIDDEN'},
-        maxlen=255,  # Max internal buffer length, longer would be clamped.
+        maxlen=255,
     )
 
     def execute(self, context):
