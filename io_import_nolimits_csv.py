@@ -103,7 +103,7 @@ def apply_tilt(spline, vertices):
 
 class ImportNl2Csv(Operator, ImportHelper):
     """Imports coaster track splines as a curve"""
-    bl_idname = "import.nl2_track_data"
+    bl_idname = "import.nl_csv_data"
     bl_label = IMPORTER_NAME
 
     # ImportHelper mixin class uses this
