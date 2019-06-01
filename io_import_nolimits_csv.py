@@ -8,7 +8,7 @@ bl_info = {
     "version": (2, 80, 1),
     "blender": (2, 80, 0),
     "location": "File > Import > NoLimits 2 Professional Track Spline (.csv)",
-    "description": "Generates a curve object from NoLimit2 Rollercoaster "
+    "description": "Generates a curve object from NoLimits 2 Roller Coaster "
                    "Simulation Professional CSV data",
     "wiki_url": "https://github.com/bestdani/BlenderNoLimitsCSVImporter",
     "category": "Import-Export"
