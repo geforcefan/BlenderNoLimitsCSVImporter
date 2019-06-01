@@ -1,13 +1,13 @@
 # <pep8 compliant>
 
-IMPORTER_NAME = "NoLimits 2 Professional Track Spline (.csv)"
+IMPORTER_NAME = "NoLimits 2 Professional Track Data (.csv)"
 
 bl_info = {
-    "name": "NoLimits 2 Professional Track Spline (.csv)",
+    "name": "NoLimits 2 Professional Track Data (.csv)",
     "author": "Ercan Akyürek and Daniel Hilpert",
     "version": (2, 80, 1),
     "blender": (2, 80, 0),
-    "location": "File > Import > NoLimits 2 Professional Track Spline (.csv)",
+    "location": "File > Import > NoLimits 2 Professional Track Data (.csv)",
     "description": "Generates a curve object from NoLimits 2 Roller Coaster "
                    "Simulation Professional CSV data",
     "wiki_url": "https://github.com/bestdani/BlenderNoLimitsCSVImporter",
