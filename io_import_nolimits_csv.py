@@ -1,6 +1,6 @@
 # <pep8 compliant>
 
-IMPORTER_NAME = "NoLimits 2 Professional Track Data (.csv)"
+TOOL_NAME = "NoLimits 2 Professional Track Data (.csv)"
 
 bl_info = {
     "name": "NoLimits 2 Professional Track Data (.csv)",
@@ -19,7 +19,7 @@ import pathlib
 
 import bpy
 import mathutils
-from bpy.props import StringProperty
+from bpy.props import StringProperty, IntProperty
 from bpy.types import Operator
 from bpy_extras.io_utils import ImportHelper
 
@@ -133,10 +133,54 @@ def add_curve_from_csv(context, file_path):
     return {'FINISHED'}
 
 
+def sample_curve_as_csv(context, file_path, point_count):
+    file_path = pathlib.Path(file_path)
+    curve = context.active_object
+    if not curve or curve.type != 'CURVE':
+        return {'CANCELLED'}
+
+    point_count = len(curve.data.splines[0].points) if point_count == 0 \
+        else point_count
+    largest_index = point_count - 1
+    constraint, reader = create_tmp_reader(context, curve)
+
+    matrices = []
+    for i in range(point_count):
+        offset = i / largest_index
+        constraint.offset_factor = offset
+        dg = bpy.context.evaluated_depsgraph_get()
+        bpy.context.scene.frame_current = 1
+        eval_reader = reader.evaluated_get(dg)
+        matrices.append(eval_reader.matrix_world.copy())
+
+    bpy.data.objects.remove(reader, do_unlink=True)
+
+    csv_header = '"No."\t"PosX"\t"PosY"\t"PosZ"\t' \
+                 '"FrontX"\t"FrontY"\t"FrontZ"\t' \
+                 '"LeftX"\t"LeftY"\t"LeftZ"\t' \
+                 '"UpX"\t"UpY"\t"UpZ"'
+
+    csv_rows = [csv_header]
+    for i, m in enumerate(matrices):
+        pos = m.col[3]
+        up = m.col[2]
+        csv_rows.append(
+            f'{i + 1}\t{pos.x}\t{pos.z}\t{-pos.y}'
+            f'\t0.0\t0.0\t0.0\t0.0\t0.0\t0.0\t'
+            f'{up.x}\t{up.z}\t{-up.y}'
+        )
+
+    csv_content = '\n'.join(csv_rows)
+    with open(file_path.with_suffix('.csv'), 'w') as f:
+        f.write(csv_content)
+
+    return {'FINISHED'}
+
+
 class ImportNl2Csv(Operator, ImportHelper):
     """Imports coaster track splines as a curve"""
     bl_idname = "import_nl.csv_data"
-    bl_label = IMPORTER_NAME
+    bl_label = TOOL_NAME
 
     filename_ext = ".csv"
 
@@ -150,6 +194,35 @@ class ImportNl2Csv(Operator, ImportHelper):
         return add_curve_from_csv(context, self.filepath)
 
 
+class ExportNl2Csv(Operator, ImportHelper):
+    """Exports the active curve as a NoLimits 2 Professional compatible CSV
+    file"""
+    bl_idname = "export_nl.csv_data"
+    bl_label = TOOL_NAME
+
+    filename_ext = ".csv"
+
+    point_count: IntProperty(
+        name="Point Count",
+        default=0,
+        min=0,
+    )
+
+    filter_glob: StringProperty(
+        default="*.csv",
+        options={'HIDDEN'},
+        maxlen=255,
+    )
+
+    def execute(self, context):
+        result = sample_curve_as_csv(context, self.filepath, self.point_count)
+        if result != {'FINISHED'}:
+            self.report(
+                {'ERROR_INVALID_CONTEXT'}, 'No valid curve object selected'
+            )
+        return result
+
+
 def menu_func_import(self, context):
     self.layout.operator(
         ImportNl2Csv.bl_idname,
@@ -157,14 +230,25 @@ def menu_func_import(self, context):
     )
 
 
+def menu_func_export(self, context):
+    self.layout.operator(
+        ExportNl2Csv.bl_idname,
+        text=ExportNl2Csv.bl_label
+    )
+
+
 def register():
     bpy.utils.register_class(ImportNl2Csv)
     bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
+    bpy.utils.register_class(ExportNl2Csv)
+    bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
 
 def unregister():
     bpy.utils.unregister_class(ImportNl2Csv)
     bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
+    bpy.utils.unregister_class(ExportNl2Csv)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
 
 
 if __name__ == "__main__":
