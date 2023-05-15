@@ -5,7 +5,7 @@ TOOL_NAME = "NoLimits 2 Professional Track Data (.csv)"
 bl_info = {
     "name": "NoLimits 2 Professional Track Data (.csv)",
     "author": "Daniel Hilpert",
-    "version": (2, 80, 1),
+    "version": (3, 0, 0),
     "blender": (2, 80, 0),
     "location": "File > Import > NoLimits 2 Professional Track Data (.csv)",
     "description": "Generates a curve object from NoLimits 2 Roller Coaster "
