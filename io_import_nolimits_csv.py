@@ -218,6 +218,8 @@ class ImportNl2Csv(Operator, ImportHelper):
 
     import_raw_points: BoolProperty(
         default=False,
+        name="Import Raw Points (slow!)",
+        description="Imports the raw points as empties. Attention, this can take several minutes for many vertices!",
     )
 
     def execute(self, context):
