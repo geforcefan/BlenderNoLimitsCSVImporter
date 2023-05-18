@@ -1,4 +1,5 @@
 # <pep8 compliant>
+from contextvars import Token
 
 TOOL_NAME = "NoLimits 2 Professional Track Data (.csv)"
 
@@ -19,7 +20,7 @@ import pathlib
 
 import bpy
 import mathutils
-from bpy.props import StringProperty, IntProperty
+from bpy.props import StringProperty, IntProperty, BoolProperty
 from bpy.types import Operator
 from bpy_extras.io_utils import ImportHelper
 
@@ -107,7 +108,29 @@ def apply_tilt_values(context, vertices, target_object, spline_points):
     bpy.data.objects.remove(reader, do_unlink=True)
 
 
-def add_curve_from_csv(context, file_path):
+def create_empties(context, name: str, vertices, parent_object):
+    collection = bpy.data.collections.new(name)
+    context.scene.collection.children.link(collection)
+
+    for vertex in vertices:
+        obj = bpy.data.objects.new(name, None)
+        obj.empty_display_type = 'ARROWS'
+
+        matrix_nl2 = mathutils.Matrix().to_3x3()
+        matrix_nl2.col[0] = vertex['left']
+        matrix_nl2.col[1] = vertex['up']
+        matrix_nl2.col[2] = vertex['front']
+
+        matrix_blender = (TO_BLENDER_COORDINATES @ matrix_nl2).to_4x4()
+        matrix_blender.col[3] = (
+                vertex['pos'] @ TO_BLENDER_COORDINATES).to_4d()
+
+        obj.matrix_world = matrix_blender
+
+        collection.objects.link(obj)
+
+
+def add_curve_from_csv(context, file_path: str, import_raw_points: bool):
     file_path = pathlib.Path(file_path)
     name = file_path.stem
 
@@ -126,6 +149,9 @@ def add_curve_from_csv(context, file_path):
 
     curve_object = bpy.data.objects.new(name + " Object", curve_data)
     curve_object.location = (0, 0, 0)
+
+    if import_raw_points:
+        create_empties(context, name + " Raw", vertices, curve_object)
 
     context.scene.collection.objects.link(curve_object)
     apply_tilt_values(context, vertices, curve_object, spline.points)
@@ -190,8 +216,14 @@ class ImportNl2Csv(Operator, ImportHelper):
         maxlen=255,
     )
 
+    import_raw_points: BoolProperty(
+        default=False,
+    )
+
     def execute(self, context):
-        return add_curve_from_csv(context, self.filepath)
+        return add_curve_from_csv(
+            context, self.filepath, self.import_raw_points
+        )
 
 
 class ExportNl2Csv(Operator, ImportHelper):
