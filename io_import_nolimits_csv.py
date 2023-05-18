@@ -22,7 +22,7 @@ import bpy
 import mathutils
 from bpy.props import StringProperty, IntProperty, BoolProperty
 from bpy.types import Operator
-from bpy_extras.io_utils import ImportHelper
+from bpy_extras.io_utils import ImportHelper, ExportHelper
 
 TO_BLENDER_COORDINATES = mathutils.Matrix(
     ((1.0, 0.0, 0.0),
@@ -228,7 +228,7 @@ class ImportNl2Csv(Operator, ImportHelper):
         )
 
 
-class ExportNl2Csv(Operator, ImportHelper):
+class ExportNl2Csv(Operator, ExportHelper):
     """Exports the active curve as a NoLimits 2 Professional compatible CSV
     file"""
     bl_idname = "export_nl.csv_data"
