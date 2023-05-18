@@ -123,7 +123,7 @@ def create_empties(context, name: str, vertices, parent_object):
 
         matrix_blender = (TO_BLENDER_COORDINATES @ matrix_nl2).to_4x4()
         matrix_blender.col[3] = (
-                vertex['pos'] @ TO_BLENDER_COORDINATES).to_4d()
+                TO_BLENDER_COORDINATES @ vertex['pos']).to_4d()
 
         obj.matrix_world = matrix_blender
 
