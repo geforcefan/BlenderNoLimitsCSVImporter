@@ -1,4 +1,8 @@
-# NoLimits 2 Track Spline Importer 
+# NoLimits 2 Track Spline Importer
+
+This add-on is abandoned. Use [Blender NoLimits 2 Utilities](https://github.com/geforcefan/blender-nolimits2-utilities)
+instead, it reads the `.nl2park` directly, so there is no csv track spline export from the Professional version of NL2
+in between.
 
 A small blender Add-on that allows to import track data from the NoLimits 2 Roller Coaster Simulation.
 ![](docs/blender-track.jpg?raw=True)
